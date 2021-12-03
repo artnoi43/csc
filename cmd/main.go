@@ -17,9 +17,9 @@ type flags struct {
 }
 
 func (f *flags) parse() {
-	flag.StringVar(&f.algo, "a", "sha256", "Algorithm")
-	flag.StringVar(&f.filename, "f", "", "File name")
-	flag.StringVar(&f.checksum, "c", "", "Checksum string to check against")
+	flag.StringVar(&f.algo, "a", "SHA256", "hash algorithm")
+	flag.StringVar(&f.filename, "f", "", "file name")
+	flag.StringVar(&f.checksum, "c", "", "checksum string to check against")
 	flag.Parse()
 }
 
