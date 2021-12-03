@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	csc "github.com/artnoi43/csc/lib"
 	"github.com/artnoi43/csc/utils"
@@ -22,16 +23,27 @@ func (f *flags) parse() {
 	flag.Parse()
 }
 
-var f flags
+var (
+	f    flags
+	algo csc.Algo
+)
 
 func init() {
 	if len(os.Args) == 1 {
 		usage()
 		os.Exit(0)
 	}
+
 	f.parse()
 	if f.filename == "" || f.checksum == "" {
 		usage()
+	}
+	if strings.EqualFold(f.algo, "SHA256") {
+		algo = csc.SHA256
+	} else if strings.EqualFold(f.algo, "SHA1") {
+		algo = csc.SHA1
+	} else if strings.EqualFold(f.algo, "MD5") {
+		algo = csc.MD5
 	}
 }
 
@@ -42,16 +54,16 @@ func main() {
 		os.Exit(2)
 	}
 
-	checksumFunc := csc.FuncMap[csc.Algo(f.algo)]
+	checksumFunc := csc.FuncMap[algo]
 	fileChecksum, matched := checksumFunc(data, f.checksum)
 
-	os.Stdout.Write([]byte(fmt.Sprintf("In:\t%s\n", f.checksum)))
-	os.Stdout.Write([]byte(fmt.Sprintf("File:\t%s\n", fileChecksum)))
+	os.Stdout.Write([]byte(fmt.Sprintf("[%v] In:\t%s\n", algo, f.checksum)))
+	os.Stdout.Write([]byte(fmt.Sprintf("[%v] File:\t%s\n", algo, fileChecksum)))
 	if matched {
-		os.Stdout.Write([]byte("Checksum matched\n"))
+		os.Stdout.Write([]byte(fmt.Sprintf("[%v] Checksum matched\n", algo)))
 		os.Exit(0)
 	} else {
-		os.Stdout.Write([]byte("Checksum not matched\n"))
+		os.Stdout.Write([]byte(fmt.Sprintf("[%v] Checksum not matched\n", algo)))
 		os.Exit(1)
 	}
 }
