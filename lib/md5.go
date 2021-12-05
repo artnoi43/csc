@@ -1,13 +1,12 @@
 package libcsc
 
 import (
+	"crypto/md5"
 	"fmt"
-
-	md5go "crypto/md5"
 )
 
 func MD5Sum(data []byte, checksumIn string) (string, bool) {
-	checksum := md5go.Sum(data)
+	checksum := md5.Sum(data)
 	checksumStr := fmt.Sprintf("%x", checksum)
 	return checksumStr, checksumStr == checksumIn
 }
