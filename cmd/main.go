@@ -35,8 +35,10 @@ func init() {
 	}
 
 	f.parse()
-	if f.filename == "" || f.checksum == "" {
+	if f.filename == "" {
 		usage()
+		os.Stderr.Write([]byte("csc: no file specified\n"))
+		os.Exit(3)
 	}
 	if strings.EqualFold(f.algo, "SHA256") {
 		algo = csc.SHA256
@@ -50,7 +52,7 @@ func init() {
 func main() {
 	data, err := utils.ReadFile(f.filename)
 	if err != nil {
-		os.Stderr.Write([]byte(fmt.Sprintf("Error reading read file: %s\n", err.Error())))
+		os.Stderr.Write([]byte(fmt.Sprintf("csc: error reading read file: %s\n", err.Error())))
 		os.Exit(2)
 	}
 
